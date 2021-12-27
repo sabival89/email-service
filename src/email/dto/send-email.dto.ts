@@ -20,7 +20,7 @@ export class SendEmailDto {
   @MinLength(3)
   from_name: string;
 
-  @ApiProperty({ example: 'Payment Reminder' })
+  @ApiProperty({ example: 'Payment Reminder for John Doe' })
   @MaxLength(30)
   @MinLength(3)
   subject: string;
