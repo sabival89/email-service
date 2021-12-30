@@ -25,7 +25,7 @@ export class SendEmailDto {
   @MinLength(3)
   subject: string;
 
-  @ApiProperty({ example: 'Just an email body message...' })
+  @ApiProperty({ example: '<html>Just an email body message...</html>' })
   @MinLength(3)
   body: string;
 }
