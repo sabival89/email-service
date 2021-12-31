@@ -9,7 +9,7 @@ export class EmailController {
   constructor(private readonly emailService: EmailService) {}
 
   @Post()
-  sendEmail(@Body(new ValidationPipe()) sendEmailDto: SendEmailDto) {
-    return this.emailService.sendEmail(sendEmailDto);
+  async sendEmail(@Body(new ValidationPipe()) sendEmailDto: SendEmailDto) {
+    return await this.emailService.sendEmail(sendEmailDto);
   }
 }

@@ -1,52 +1,132 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
 import { SendEmailDto } from './dto/send-email.dto';
 import { EmailProvidersService } from 'src/email-providers/email-providers.service';
 import { EmailMapper } from './mappers/email.map';
+import { EmailServiceOkException } from 'src/core/exceptions/errors/email-service-ok-exception';
 
 @Injectable()
 export class EmailService {
+  // Console Activity logs initialization
   private readonly logger = new Logger(EmailService.name);
 
-  constructor(private emailProvider: EmailProvidersService) {}
+  // Track current email retries
+  private EmailRetryTracker: number;
 
-  sendEmail(sendEmailDto: SendEmailDto) {
-    // this.logger.log('Email process started..');
+  /**
+   * Inject dependencies
+   * @param emailProvider Email service provider class instance
+   */
+  constructor(private emailProvider: EmailProvidersService) {
+    // Initialize email retry tracker
+    this.EmailRetryTracker = this.emailProvider.EmailFailureRetryTimes;
+  }
 
-    console.log(
+  /**
+   * Send email to recipient
+   * @param sendEmailDto Validated email properties
+   * @returns
+   */
+  async sendEmail(sendEmailDto: SendEmailDto) {
+    this.logger.log(`Preparing to send email to ${sendEmailDto.to_name}`);
+
+    try {
+      this.logger.log(`Using Mailgun email provider`);
+
+      // Send email via Mailgun
+      return await this.useMailgun(sendEmailDto);
+    } catch (mailgunError) {
+      this.logger.error(
+        'Failed to send email via default email provider (Mailgun). Falling back to alternate email provider (Sendgrid)',
+      );
+
+      try {
+        this.logger.log(`Switching to Sendgrid email provider`);
+
+        // Send email via Sendgrid
+        return await this.useSendGrid(sendEmailDto);
+      } catch (sendgridError) {
+        this.logger.error(
+          'Failed to send email via alternate email provider (Sendgrid)',
+        );
+
+        // Retry sending email if the email-failure-retry option is enabled
+        if (
+          this.emailProvider.EmailFailureRetry &&
+          this.EmailRetryTracker > 0
+        ) {
+          this.logger.warn(
+            `[${this.EmailRetryTracker}] Retrying after ${
+              (this.emailProvider.EmailFailureRetryDelayTime % 60000) / 1000
+            } seconds`,
+          );
+
+          // Delay email retry interval if email-failure-retry-delay option is enabled
+          this.emailProvider.EmailFailureRetryDelay
+            ? await this.emailProvider
+                .delay()
+                .then(async () => await this.retrySendEmail(sendEmailDto))
+            : await this.retrySendEmail(sendEmailDto);
+        } else {
+          // Reset email retry tracker
+          this.EmailRetryTracker = this.emailProvider.EmailFailureRetryTimes;
+
+          this.logger.error(
+            'Unable to send email at this time. Please contact support',
+            JSON.stringify({ mailgunError, sendgridError }),
+          );
+
+          throw new HttpException(
+            {
+              status: HttpStatus.UNAUTHORIZED,
+              sendgridError,
+              mailgunError,
+            },
+            HttpStatus.UNAUTHORIZED,
+          );
+        }
+      }
+    }
+  }
+
+  /**
+   * Send email via Mailgun API
+   * @param sendEmailDto Validated email properties
+   * @returns
+   */
+  async useMailgun(sendEmailDto: SendEmailDto) {
+    // Call Mailgun's API send email method
+    await this.emailProvider.Mailgun.messages().send(
       EmailMapper.Mailgun(sendEmailDto),
-      EmailMapper.SendGrid(sendEmailDto),
     );
 
-    /* const data = {
-      to: 'Valentine Aduaka <valentineaduaka@outlook.com>',
-      from: `Valentine Aduaka <vaduaka@nochooks.com>`,
-      subject: 'Hello',
-      html: '<html>HTML version of the body</html>',
-    };
+    this.logger.log(`Email was successfully sent to ${sendEmailDto.to_name}`);
 
-    this.emailProvider.Mailgun.messages()
-      .send(data)
-      .then((result) => console.log('Done: ', result))
-      .catch((error) => console.error('Error: ', error)); */
+    return new EmailServiceOkException('Email was sent successfully');
+  }
 
-    /* const msg = {
-      to: { email: 'valentineaduaka@outlook.com', name: 'Kaosiso Aduaka' }, // Change to your recipient
-      from: { email: 'vaduaka@nochooks.com', name: 'Valentine Aduaka' }, // Change to your verified sender
-      subject: 'Sending with SendGrid is Fun',
-      html: '<html>and easy to do anywhere, even with Node.js</html>',
-    };
+  /**
+   * Send email via SendGrid API
+   * @param sendEmailDto Validated email properties
+   * @returns
+   */
+  async useSendGrid(sendEmailDto: SendEmailDto) {
+    // Call SendGrid's API send email method
+    await this.emailProvider.SendGrid.send(EmailMapper.SendGrid(sendEmailDto));
 
-    
-    this.emailProvider.SendGrid.send(msg)
-    .then((response) => {
-      console.log('Email sent', 'Response: ', response);
-    })
-    .catch((error) => {
-      console.error(error);
-    }); */
+    this.logger.log(`Email was successfully sent to ${sendEmailDto.to_name}`);
 
-    // this.logger.error('Cannot process started..');
+    return new EmailServiceOkException('Email was sent successfully');
+  }
 
-    return 'This action adds a new email';
+  /**
+   * Retry sending email to recipient
+   * @param sendEmailDto Validated email properties
+   * @returns
+   */
+  async retrySendEmail(sendEmailDto: SendEmailDto) {
+    // Decrement email retry times
+    this.EmailRetryTracker -= 1;
+
+    return await this.sendEmail(sendEmailDto);
   }
 }
