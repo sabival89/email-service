@@ -10,7 +10,7 @@ export class EmailProvidersService {
    */
   public readonly Mailgun: Mailgun.Mailgun;
 
-  public readonly SendGrid: SendGrid.MailService;
+  public SendGrid: SendGrid.MailService;
 
   public readonly EmailFailureRetry: boolean;
 

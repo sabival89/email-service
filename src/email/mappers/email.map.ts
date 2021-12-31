@@ -16,7 +16,7 @@ export class EmailMapper {
       { email: sendEmailDto.to, name: sendEmailDto.to_name },
       { email: sendEmailDto.from, name: sendEmailDto.from_name },
       sendEmailDto.subject,
-      sendEmailDto.body,
+      (sendEmailDto.body).replace(/<[^>]+>/g, ''),
     );
   }
 
@@ -30,7 +30,8 @@ export class EmailMapper {
       `${sendEmailDto.to_name} <${sendEmailDto.to}>`,
       `${sendEmailDto.from_name} <${sendEmailDto.from}>`,
       sendEmailDto.subject,
-      sendEmailDto.body,
+      sendEmailDto.body.replace(/<[^>]+>/g, ''),
     );
   }
+
 }

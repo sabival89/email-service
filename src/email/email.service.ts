@@ -2,7 +2,7 @@ import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
 import { SendEmailDto } from './dto/send-email.dto';
 import { EmailProvidersService } from '../email-providers/email-providers.service';
 import { EmailMapper } from './mappers/email.map';
-import { EmailServiceOkException } from '../core/exceptions/errors/email-service-ok-exception';
+import { EmailServiceOkException } from '../core/exceptions/email-service-ok-exception';
 
 @Injectable()
 export class EmailService {
@@ -75,12 +75,9 @@ export class EmailService {
             JSON.stringify({ mailgunError, sendgridError }),
           );
 
+          // Throw error message to the API consumer
           throw new HttpException(
-            {
-              status: HttpStatus.UNAUTHORIZED,
-              sendgridError,
-              mailgunError,
-            },
+            'A problem occurred while trying to send email. Please try again later or contact support',
             HttpStatus.UNAUTHORIZED,
           );
         }

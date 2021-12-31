@@ -8,6 +8,11 @@ import { ApiTags } from '@nestjs/swagger';
 export class EmailController {
   constructor(private readonly emailService: EmailService) {}
 
+  /**
+   * Send email to recipient
+   * @param sendEmailDto
+   * @returns
+   */
   @Post()
   async sendEmail(@Body(new ValidationPipe()) sendEmailDto: SendEmailDto) {
     return await this.emailService.sendEmail(sendEmailDto);

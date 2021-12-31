@@ -67,15 +67,20 @@
       "json",
       "ts"
     ],
+    "moduleDirectories": [
+      "node_modules",
+      "<rootDir>"
+    ],
     "rootDir": "./",
-    "testRegex": ".spec.ts$",
+    "testRegex": ".*\\.spec\\.ts$",
     "transform": {
       "^.+\\.(t|j)s$": "ts-jest"
     },
     "collectCoverageFrom": [
       "**/*.(t|j)s"
     ],
-    "coverageDirectory": "../coverage",
+    "collectCoverage": true,
+    "coverageDirectory": "./coverage",
     "testEnvironment": "node"
   }
 }

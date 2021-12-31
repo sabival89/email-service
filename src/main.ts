@@ -11,6 +11,9 @@ async function bootstrap() {
     .setVersion('1.0')
     .build();
 
+  /**
+   * Initilize OpenApi swagger docs
+   */
   const SwaggerDocument = SwaggerModule.createDocument(app, config);
 
   SwaggerModule.setup('api', app, SwaggerDocument);
