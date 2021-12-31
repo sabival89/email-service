@@ -1,8 +1,8 @@
 import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
 import { SendEmailDto } from './dto/send-email.dto';
-import { EmailProvidersService } from 'src/email-providers/email-providers.service';
+import { EmailProvidersService } from '../email-providers/email-providers.service';
 import { EmailMapper } from './mappers/email.map';
-import { EmailServiceOkException } from 'src/core/exceptions/errors/email-service-ok-exception';
+import { EmailServiceOkException } from '../core/exceptions/errors/email-service-ok-exception';
 
 @Injectable()
 export class EmailService {
