@@ -11,13 +11,13 @@
 A transactional email service that provides an abstraction between at least two different email service providers.
 
  #### Framework
-  - [Nest](https://github.com/nestjs/nest) framework. I used this framework because it is an open-source server-side application development framwework for builing efficient and scalable Nodejs applications and it has a large community and support system.
+  - [Nest](https://github.com/nestjs/nest) framework.
   
  #### Language
-  - [Typescript](https://www.typescriptlang.org/) I chose typescript because it makes you application or api easier to use due to defined typings. It also allows for early spotting of bugs and makes your code base readable.
+  - [Typescript](https://www.typescriptlang.org/)
 
  #### Libraries
- - [Swagger](https://swagger.io/) Api Docs - I chose this because it provides a UI that describes into details, your API and its elements and gives you a clean interactive documentation. 
+ - [Swagger](https://swagger.io/)
 
  
  #### Things I wish to include
