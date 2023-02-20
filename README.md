@@ -19,14 +19,9 @@ A transactional email service that provides an abstraction between at least two 
  #### Libraries
  - [Swagger](https://swagger.io/) Api Docs - I chose this because it provides a UI that describes into details, your API and its elements and gives you a clean interactive documentation. 
 
- #### Things I left out 
- - I couldn't complete the `unit` and `end-to-end` tests for the email API services
-
- #### Time spent
- I spent approximately 3 days for this project. I spent more time trying to research on testing the email API services.
  
  #### Things I wish to include
- - A custon HttpException class that wraps all the API's expected Http error statusCodes and a mapping to the NestJs HttpException classes with custome error messages that make sense to clients or consumers of the API.
+ - A custom HttpException class that wraps all the API's expected Http error statusCodes and a mapping to the NestJs HttpException classes with custom error messages that make sense to clients or consumers of the API.
  - Implement a `Queue` service to circumvent application scaling and performance challenges. So the `Queue` would hold as many emails as possible and dispatch them one after the other via it's daemon process. This will ensure that users get instant successfull responses when they send out emails, regardless of whether the email reached the recipient or not. 
 
 
