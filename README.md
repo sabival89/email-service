@@ -20,10 +20,10 @@ A transactional email service that provides an abstraction between at least two 
  - [Swagger](https://swagger.io/)
 
  
- #### Things I wish to include
- - A custom HttpException class that wraps all the API's expected Http error statusCodes and a mapping to the NestJs HttpException classes with custom error messages that make sense to clients or consumers of the API.
- - Implement a `Queue` service to circumvent application scaling and performance challenges. So the `Queue` would hold as many emails as possible and dispatch them one after the other via it's daemon process. This will ensure that users get instant successfull responses when they send out emails, regardless of whether the email reached the recipient or not. 
+#### I aim to incorporate:
 
+- A custom HttpException class consolidating expected API error status codes and mapping them to NestJs HttpException classes. These custom error messages will enhance clarity for API consumers.
+- Introducing a Queue service to address application scaling and performance hurdles. The Queue will efficiently manage emails, dispatching them sequentially via its daemon process. This guarantees immediate successful responses for users sending emails, irrespective of their final delivery status.
 
  
 ## Installation
